@@ -1,1 +1,1 @@
-# ParaFutbolu - EN SON
+# ParaFutbolu
