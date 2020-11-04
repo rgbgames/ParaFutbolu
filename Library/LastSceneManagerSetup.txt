@@ -1,0 +1,4 @@
+sceneSetups:
+- path: "Assets/para futbolu-\xE7al\u0131\u015Fma.unity"
+  isLoaded: 1
+  isActive: 1

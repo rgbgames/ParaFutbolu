@@ -1,0 +1,2 @@
+Dosya çekilirken "gitgames" klasörüne girilip sağ tıklanacak. Ardından "Git Bash Here" seçilecek. Açılan pencerede 
+"git pull ..." yazılacak. "..." olan kısıma git internet adresindeki kod kopyalanacak. 
