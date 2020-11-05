@@ -30,7 +30,7 @@ public class cizgi_icin : MonoBehaviour {
         ara_control2 = cameracode_access.hit2_control;
         ara_control3 = cameracode_access.hit3_control;
         /* Seçtiğim topa göre çizgi farklı pozisyonlar almalı. Seçtiğim topu kontrol edebilmek için de yukarıdaki kodlar
-         * yazıldı. */
+         * yazıldı. Bu kodlara göre hangi topa vurmak istediğimi öğreneceğim. */
 
         if (ara_control1)
         {
@@ -47,7 +47,7 @@ public class cizgi_icin : MonoBehaviour {
             transform.localScale = new Vector3(0.01f, 0.1f, 0.01f + distance1);
             /* Küp top2'ye doğru dönüş yaptıktan sonra onun boyunu top2 ve top3 objeleri arasındaki mesafe kadar uzatmam
              * gerekiyordu. Bunu başarmak için de top2 ve top3 arasındaki mesafe boyu hesaplandı. Ardından bu boy kadar 
-             * küp bir eksen boyunca uzatıldı. Artık top1 seçildiği zaman top2 ve top3 arasına çekilmiş bir çizgim var. 
+             * küp z ekseni boyunca uzatıldı. Artık top1 seçildiği zaman top2 ve top3 arasına çekilmiş bir çizgim var. 
              * Aynı işlemler aşağıdaki "if" komutları altında başka toplara vurulacağı zaman çizginin farklı pozisyon al-
              * ması için yine yazıldı. */
 

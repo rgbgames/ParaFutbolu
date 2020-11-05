@@ -5,8 +5,8 @@ using UnityEngine;
 public class camera_controller : MonoBehaviour {
 
 
-    public Vector3 camera_first_position;
-    public Vector3 distance;
+    private Vector3 camera_first_position;
+    private Vector3 distance;
 
     public GameObject camera_motion; 
     //Kamera bu GameObject'in alt nesnesi olacak ve bunun etrafında dönecek ve hareket edecek.
@@ -15,7 +15,7 @@ public class camera_controller : MonoBehaviour {
     public bool hit1_control = false;
     public bool hit2_control = false;
     public bool hit3_control = false;
-    public Vector3 vurus_acisi;
+    private Vector3 vurus_acisi;
     public Vector3 vurus_vector;
     
 
@@ -72,7 +72,8 @@ public class camera_controller : MonoBehaviour {
                     /* Bu kodla birlikte kamera topa doğru distance vektörü mesafesinde yaklaşacak. Bir diğer deyişle topumu
                      * distance vektörü mesafesinde takip edecek. */
 
-                    transform.rotation = Quaternion.Euler(22.834f, 0, 0);
+                    transform.rotation = Quaternion.Euler(22.834f, 0, 0); 
+                    // Birkaç top seçimi yaptıktan sonra bakış açılarında ufak bir hata oluyordu. Bu kodla birlikte bu hata düzeltildi.
 
                     rotation_control = true; // Kameramın topa tıkladığımda hareket etmesini istediğim için bu kontrol kodu yazıldı.
 

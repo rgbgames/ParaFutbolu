@@ -18,7 +18,7 @@ public class game_controller : MonoBehaviour {
 
     private bool control1;
     public bool aradan_gecis_activity=false;
-    public bool aradan_gecis_control=false;
+    private bool aradan_gecis_control=false;
     
     private Vector3 vector_access;
     
@@ -73,8 +73,7 @@ public class game_controller : MonoBehaviour {
             
         }
 
-        /* FixedUpdate metodu içindeki kodlar hit2_control ve hit3_control için tekrar yazılarak top2 ve top3 objele-
-         * rinin içine atıldı. */
+        
 
     }
 
@@ -100,6 +99,15 @@ public class game_controller : MonoBehaviour {
         {
             Debug.Log("Gol");
         }
+
+        /* Bu metoda göre topumuz aradan_gecis_control boolean'ını sağlayıp diğer iki topun arasından geçtiyse ve "kale"nin
+         * alanına girdiyse gol atma işlemimiz tamamlanmış oluyor */
     }
+
+    /* game_controller scriptinin çok benzeri game_controller2 ve game_controller3 adı altında top2 ve top3'ün durumları
+     * için de yazıldı. Bu üç scriptin arasında hiçbir fark yok. Sadece birisi top1'in, diğeri top2'nin, en sonuncusu da
+     * top3 topa vurma, aradan geçme ve gol olma durumlarını kontrol ediyor. */
+
+
 }
 

@@ -463,7 +463,6 @@ MonoBehaviour:
   first_ball: {fileID: 709555197}
   second_ball: {fileID: 1798884621}
   aradan_gecis_activity: 0
-  aradan_gecis_control: 0
 --- !u!1 &676695293
 GameObject:
   m_ObjectHideFlags: 0
@@ -557,14 +556,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2682616d86da964786eff94a0230b9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera_first_position: {x: 0, y: 0, z: 0}
-  distance: {x: 0, y: 0, z: 0}
   camera_motion: {fileID: 0}
   rotation_control: 0
   hit1_control: 0
   hit2_control: 0
   hit3_control: 0
-  vurus_acisi: {x: 0, y: 0, z: 0}
   vurus_vector: {x: 0, y: 0, z: 0}
 --- !u!1 &709555197
 GameObject:
@@ -601,7 +597,6 @@ MonoBehaviour:
   second_ball: {fileID: 1798884621}
   third_ball: {fileID: 425755544}
   aradan_gecis_activity: 0
-  aradan_gecis_control: 0
 --- !u!54 &709555199
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -900,4 +895,3 @@ MonoBehaviour:
   first_ball: {fileID: 709555197}
   third_ball: {fileID: 425755544}
   aradan_gecis_activity: 0
-  aradan_gecis_control: 0

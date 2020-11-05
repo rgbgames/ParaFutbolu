@@ -18,7 +18,7 @@ public class game_controller2 : MonoBehaviour {
     public GameObject third_ball;
 
     public bool aradan_gecis_activity = false;
-    public bool aradan_gecis_control = false;
+    private bool aradan_gecis_control = false;
 
     void Start () {
         code_access = camera_box.GetComponent<camera_controller>();
