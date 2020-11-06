@@ -21,6 +21,11 @@ public class game_controller : MonoBehaviour {
     private bool aradan_gecis_control=false;
     
     private Vector3 vector_access;
+
+    public int vurus_sayisi = 0;
+    private int toplam_vurus_sayisi;
+
+    private int boost_power = 1;
     
 
 	
@@ -49,8 +54,11 @@ public class game_controller : MonoBehaviour {
             if (control1)
             {
                 rb = GetComponent<Rigidbody>();
-                rb.AddForce(vector_access, ForceMode.Impulse);
+                rb.AddForce(vector_access*2*boost_power, ForceMode.Impulse);
                 // Eğer hit1_control "true" ise ve sağ tıkladıysak artık top1 objemize vuruş yapıyoruz.
+                boost_power = 1;
+                /* Boost butonuna tıkladığımda bir defaya mahsus olarak topa sert vurmak istiyorum. Bu yüzden  yukarıdaki
+                 * kodu yazarak boost_power'ı tekrardan eski konumuna getirdim. */
 
                 code_access.rotation_control = false;
                 code_access.hit1_control = false;
@@ -68,6 +76,12 @@ public class game_controller : MonoBehaviour {
                 /* Topa tıkladığımda sadece top1'in aradan geçip geçmediğini kontrol etmek istiyorum. Bu yüzden diğer
                  * topların aradan geçme boolean'larına eriştim ve onları "false" yaptım. */
 
+                vurus_sayisi += 1;
+                toplam_vurus_sayisi = vurus_sayisi + second_ball_access.vurus_sayisi + third_ball_access.vurus_sayisi;
+                Debug.Log(toplam_vurus_sayisi);
+                /* Yukarıdaki üç kodla birlikte topa vuruş sayısı kısıtlandı. OnTriggerExit ve OnCollisionStay metodlarının
+                 * kodlarında da yazdığı üzere toplam 4 vuruş hakkımız olacak. 4 vuruşu geçtiğimiz anda aradan geçme ve
+                 * gol olma durumları gerçekleşmeyecek. */
             }
 
             
@@ -81,7 +95,7 @@ public class game_controller : MonoBehaviour {
     {
         string obje_ismi = other.gameObject.name;
 
-        if (aradan_gecis_activity==true && obje_ismi.Equals("aradan_gecme"))
+        if (aradan_gecis_activity==true && obje_ismi.Equals("aradan_gecme") && toplam_vurus_sayisi<=4)
         {
             Debug.Log("Secilen top1 gecti.");
             aradan_gecis_control = true;
@@ -95,18 +109,25 @@ public class game_controller : MonoBehaviour {
     {
         string kale_ismi = collision.gameObject.name;
 
-        if(aradan_gecis_control==true && kale_ismi.Equals("kale"))
+        if(aradan_gecis_control==true && kale_ismi.Equals("kale") && toplam_vurus_sayisi<=4)
         {
             Debug.Log("Gol");
         }
 
-        /* Bu metoda göre topumuz aradan_gecis_control boolean'ını sağlayıp diğer iki topun arasından geçtiyse ve "kale"nin
-         * alanına girdiyse gol atma işlemimiz tamamlanmış oluyor */
+        /* Bu metoda göre topumuz aradan_gecis_control boolean'ını sağlayıp diğer iki topun arasından geçtiyse, toplam
+         * vuruş sayısının altındaysa ve "kale"nin alanına girdiyse gol atma işlemimiz tamamlanmış oluyor */
     }
 
     /* game_controller scriptinin çok benzeri game_controller2 ve game_controller3 adı altında top2 ve top3'ün durumları
      * için de yazıldı. Bu üç scriptin arasında hiçbir fark yok. Sadece birisi top1'in, diğeri top2'nin, en sonuncusu da
      * top3 topa vurma, aradan geçme ve gol olma durumlarını kontrol ediyor. */
+
+    public void boost()
+    {
+        boost_power = 5;
+        /* Boost butonuna tıkladığımda artık top1'in vuruş gücü artıyor. Bu aşamadan sonra "Boost" butonunu top2 ve top3
+         * için de aktif edeceğim... */
+    }
 
 
 }
