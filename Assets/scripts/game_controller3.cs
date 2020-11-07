@@ -23,7 +23,10 @@ public class game_controller3 : MonoBehaviour {
     public int vurus_sayisi = 0;
     private int toplam_vurus_sayisi;
 
-    
+    private int boost_power = 1;
+    public UnityEngine.UI.Button boost_button;
+
+
 
     void Start () {
         code_access = camera_box.GetComponent<camera_controller>();
@@ -40,12 +43,20 @@ public class game_controller3 : MonoBehaviour {
         control3 = code_access.hit3_control;
         vector_access = code_access.vurus_vector;
 
+        if (control3)
+        {
+            boost_button.gameObject.SetActive(true);
+            first_ball_access.boost_button.gameObject.SetActive(false);
+            second_ball_access.boost_button.gameObject.SetActive(false);
+        }
+
         if (Input.GetMouseButtonDown(1))
         {
             if (control3)
             {
                 rb = GetComponent<Rigidbody>();
-                rb.AddForce(vector_access*2, ForceMode.Impulse);
+                rb.AddForce(vector_access*2*boost_power, ForceMode.Impulse);
+                boost_power = 1;
                 code_access.rotation_control = false;
                 code_access.hit3_control = false;
                 camera_box.transform.position = new Vector3(0, 4.91f, -13.44f);
@@ -88,5 +99,11 @@ public class game_controller3 : MonoBehaviour {
         }
     }
 
-    
+    public void boost()
+    {
+        boost_power = 5;
+
+    }
+
+
 }

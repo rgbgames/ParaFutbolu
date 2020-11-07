@@ -26,6 +26,7 @@ public class game_controller : MonoBehaviour {
     private int toplam_vurus_sayisi;
 
     private int boost_power = 1;
+    public UnityEngine.UI.Button boost_button;
     
 
 	
@@ -46,6 +47,16 @@ public class game_controller : MonoBehaviour {
         control1 = code_access.hit1_control;
         // Bu kodla birlikte "camera_controller" scriptindeki "hit1_control" boolean'ına erişim sağlandı.
 
+        if (control1)
+        {
+            boost_button.gameObject.SetActive(true);
+            second_ball_access.boost_button.gameObject.SetActive(false);
+            third_ball_access.boost_button.gameObject.SetActive(false);
+            /* Herbir top için ayrı boost butonları oluşturuldu ve hepsi başlangıçta deaktif bir halde. Yukarıdaki "if" 
+             * içindeki kodlar her top için ayrı ayrı yazıldı. Böylelikle boost butonları seçilen topa göre aktif oluyor
+             * ve o topa yüksek güç uygulayabiliyor. */
+        }
+
         vector_access = code_access.vurus_vector;
         // Bu kodla birlikte "camera_controller" scriptindeki "vurus_vector" vektörüne erişim sağlandı.
 
@@ -53,6 +64,8 @@ public class game_controller : MonoBehaviour {
         {
             if (control1)
             {
+                
+
                 rb = GetComponent<Rigidbody>();
                 rb.AddForce(vector_access*2*boost_power, ForceMode.Impulse);
                 // Eğer hit1_control "true" ise ve sağ tıkladıysak artık top1 objemize vuruş yapıyoruz.
