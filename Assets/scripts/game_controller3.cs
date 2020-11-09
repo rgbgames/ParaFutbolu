@@ -26,6 +26,11 @@ public class game_controller3 : MonoBehaviour {
     private int boost_power = 1;
     public UnityEngine.UI.Button boost_button;
 
+    private Vector2 firstPressPos;
+    private Vector2 secondPressPos;
+    private Vector2 currentSwipe;
+    private Vector3 swipevector;
+
 
 
     void Start () {
@@ -55,21 +60,36 @@ public class game_controller3 : MonoBehaviour {
             if (control3)
             {
                 rb = GetComponent<Rigidbody>();
-                rb.AddForce(vector_access*2*boost_power, ForceMode.Impulse);
                 boost_power = 1;
-                code_access.rotation_control = false;
-                code_access.hit3_control = false;
-                camera_box.transform.position = new Vector3(0, 4.91f, -13.44f);
-                camera_box.transform.eulerAngles = new Vector3(22.834f, 0, 0);
+                firstPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
                 aradan_gecis_activity = true;
                 first_ball_access.aradan_gecis_activity = false;
                 second_ball_access.aradan_gecis_activity = false;
-                vurus_sayisi += 1;
-                toplam_vurus_sayisi = vurus_sayisi + first_ball_access.vurus_sayisi + second_ball_access.vurus_sayisi;
-                Debug.Log (toplam_vurus_sayisi);
+                
             }
 
 
+        }
+
+        if (Input.GetMouseButtonUp(1))
+        {
+            if (control3)
+            {
+                secondPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                currentSwipe = new Vector2(secondPressPos.x - firstPressPos.x, secondPressPos.y - firstPressPos.y);
+                currentSwipe.Normalize();
+                swipevector = new Vector3(currentSwipe.x, 0, currentSwipe.y);
+                rb.AddForce((swipevector+vector_access)*boost_power*2, ForceMode.Impulse);
+                camera_box.transform.position = new Vector3(0, 4.91f, -13.44f);
+                camera_box.transform.eulerAngles = new Vector3(22.834f, 0, 0);
+                code_access.rotation_control = false;
+                code_access.hit3_control = false;
+                vurus_sayisi += 1;
+                toplam_vurus_sayisi = vurus_sayisi + first_ball_access.vurus_sayisi + second_ball_access.vurus_sayisi;
+                Debug.Log(toplam_vurus_sayisi);
+                
+            }
+            
         }
 
 
@@ -96,6 +116,9 @@ public class game_controller3 : MonoBehaviour {
         if (aradan_gecis_control == true && kale_ismi.Equals("kale") && toplam_vurus_sayisi<=4)
         {
             Debug.Log("Gol");
+            code_access.i = 0;
+            code_access.j = 0;
+            code_access.k = 0;
         }
     }
 

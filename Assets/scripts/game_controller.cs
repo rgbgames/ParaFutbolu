@@ -27,10 +27,15 @@ public class game_controller : MonoBehaviour {
 
     private int boost_power = 1;
     public UnityEngine.UI.Button boost_button;
-    
 
-	
-	void Start () {
+    private Vector2 firstPressPos;
+    private Vector2 secondPressPos;
+    private Vector2 currentSwipe;
+    private Vector3 swipevector;
+
+
+
+    void Start () {
 
         code_access = camera_box.GetComponent<camera_controller>();
         // Bu kod "camera_controller" scriptine erişmek için yazıldı.
@@ -64,30 +69,57 @@ public class game_controller : MonoBehaviour {
         {
             if (control1)
             {
-                
-
                 rb = GetComponent<Rigidbody>();
-                rb.AddForce(vector_access*2*boost_power, ForceMode.Impulse);
                 // Eğer hit1_control "true" ise ve sağ tıkladıysak artık top1 objemize vuruş yapıyoruz.
+
                 boost_power = 1;
                 /* Boost butonuna tıkladığımda bir defaya mahsus olarak topa sert vurmak istiyorum. Bu yüzden  yukarıdaki
                  * kodu yazarak boost_power'ı tekrardan eski konumuna getirdim. */
 
-                code_access.rotation_control = false;
-                code_access.hit1_control = false;
-                /* Topa vurduktan sonra kameramın hala topa bakış açısını ayarlıyor olmasını ve hiçbir top seçimi ve 
-                 * kamera ayarı yapmadan tekrar sağ tıkladığımda vuruş yapmayı istemiyorum. Bunu engellemek için 
-                 * camera_controller scriptindeki rotation_control'ü ve hit1_control'ü "false" yaptım. */
-
-                camera_box.transform.position = new Vector3(0, 4.91f, -13.44f);
-                camera_box.transform.eulerAngles = new Vector3(22.834f, 0, 0);
-                // Topa vurduktan sonra kameramın açısını ve pozisyonunu oyunun ilk başladığı pozisyona ayarladım. 
+                firstPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                // Topa tıkladığım andaki mouse'nin pozisyonunu belirledim.
 
                 aradan_gecis_activity = true;
                 second_ball_access.aradan_gecis_activity = false;
                 third_ball_access.aradan_gecis_activity = false;
                 /* Topa tıkladığımda sadece top1'in aradan geçip geçmediğini kontrol etmek istiyorum. Bu yüzden diğer
                  * topların aradan geçme boolean'larına eriştim ve onları "false" yaptım. */
+
+            }
+
+            
+        }
+
+        if (Input.GetMouseButtonUp(1))
+        {
+            if (control1)
+            {
+                secondPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                // Mouse'ye tıklamayı bıraktığım andaki pozisyonu belirledim.
+
+                currentSwipe = new Vector2(secondPressPos.x - firstPressPos.x, secondPressPos.y - firstPressPos.y);
+                // Mouse'ye ilk tıkladığım ve tıklamayı bıraktığım anlardaki pozisyonlar arası vektörü belirledim.
+
+                currentSwipe.Normalize();
+                /* Current Swipe vektörünün uzunluğunu 1 birim yapmak için yukarıdaki kod yazıldı. Aksi halde istemsiz
+                 * kuvvetlerde topa vuruşlar gözlenebiliyordu. */
+
+                swipevector = new Vector3(currentSwipe.x, 0, currentSwipe.y);
+                /* Ben topa x ve z eksenlerinde vurmak istediğim için currentSwipe vektörünün x ve y bileşenini 
+                 * swipevector vektörünün x ve z bileşenlerine eşitledim. */
+
+                rb.AddForce((swipevector+vector_access)*boost_power*2, ForceMode.Impulse);
+                // Bu kodla birlikte kameramın bakış açısını da hesaba katarak sürüklediğim yönde vuruş yapabiliyorum.
+
+                camera_box.transform.position = new Vector3(0, 4.91f, -13.44f);
+                camera_box.transform.eulerAngles = new Vector3(22.834f, 0, 0);
+                // Topa vurduktan sonra kameramın açısını ve pozisyonunu oyunun ilk başladığı pozisyona ayarladım.
+
+                code_access.rotation_control = false;
+                code_access.hit1_control = false;
+                /* Topa vurduktan sonra kameramın hala topa bakış açısını ayarlıyor olmasını ve hiçbir top seçimi ve 
+                 * kamera ayarı yapmadan tekrar sağ tıkladığımda vuruş yapmayı istemiyorum. Bunu engellemek için 
+                 * camera_controller scriptindeki rotation_control'ü ve hit1_control'ü "false" yaptım. */
 
                 vurus_sayisi += 1;
                 toplam_vurus_sayisi = vurus_sayisi + second_ball_access.vurus_sayisi + third_ball_access.vurus_sayisi;
@@ -97,7 +129,7 @@ public class game_controller : MonoBehaviour {
                  * gol olma durumları gerçekleşmeyecek. */
             }
 
-            
+
         }
 
         
@@ -111,6 +143,12 @@ public class game_controller : MonoBehaviour {
         if (aradan_gecis_activity==true && obje_ismi.Equals("aradan_gecme") && toplam_vurus_sayisi<=4)
         {
             Debug.Log("Secilen top1 gecti.");
+
+            code_access.i = 0;
+            code_access.j = 0;
+            code_access.k = 0;
+            // Eğer aradan geçme gerçekleştiyse seçtiğim topu bir kez daha seçebilmeliyim. Bu yüzden yukarıdaki kodlar yazıldı.
+
             aradan_gecis_control = true;
         }
         
@@ -131,9 +169,7 @@ public class game_controller : MonoBehaviour {
          * vuruş sayısının altındaysa ve "kale"nin alanına girdiyse gol atma işlemimiz tamamlanmış oluyor */
     }
 
-    /* game_controller scriptinin çok benzeri game_controller2 ve game_controller3 adı altında top2 ve top3'ün durumları
-     * için de yazıldı. Bu üç scriptin arasında hiçbir fark yok. Sadece birisi top1'in, diğeri top2'nin, en sonuncusu da
-     * top3 topa vurma, aradan geçme ve gol olma durumlarını kontrol ediyor. */
+    
 
     public void boost()
     {
@@ -142,6 +178,8 @@ public class game_controller : MonoBehaviour {
          * için de aktif edeceğim... */
     }
 
-
+    /* game_controller scriptinin çok benzeri game_controller2 ve game_controller3 adı altında top2 ve top3'ün durumları
+     * için de yazıldı. Bu üç scriptin arasında hiçbir fark yok. Sadece birisi top1'in, diğeri top2'nin, en sonuncusu da
+     * top3 topa vurma, aradan geçme ve gol olma durumlarını kontrol ediyor. */
 }
 
