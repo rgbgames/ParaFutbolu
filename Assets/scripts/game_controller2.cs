@@ -8,7 +8,6 @@ public class game_controller2 : MonoBehaviour {
     private camera_controller code_access;
     public GameObject camera_box;
     private bool control2;
-
     private Vector3 vector_access;
 
     private game_controller first_ball_access;
@@ -30,7 +29,10 @@ public class game_controller2 : MonoBehaviour {
     private Vector2 secondPressPos;
     private Vector2 currentSwipe;
     private Vector3 swipevector;
+    private Vector3 force_vector;
 
+    private float start_time;
+    
 
     void Start () {
         code_access = camera_box.GetComponent<camera_controller>();
@@ -44,6 +46,7 @@ public class game_controller2 : MonoBehaviour {
 
         control2 = code_access.hit2_control;
         vector_access = code_access.vurus_vector;
+        transform.rotation = Quaternion.LookRotation(vector_access);
 
         if (control2)
         {
@@ -57,7 +60,8 @@ public class game_controller2 : MonoBehaviour {
             if (control2)
             {
                 rb = GetComponent<Rigidbody>();
-                boost_power = 1;
+                start_time = Time.time;
+                rb.drag = 2;
                 firstPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
                 aradan_gecis_activity = true;
                 first_ball_access.aradan_gecis_activity = false;
@@ -76,14 +80,20 @@ public class game_controller2 : MonoBehaviour {
                 currentSwipe = new Vector2(secondPressPos.x - firstPressPos.x, secondPressPos.y - firstPressPos.y);
                 currentSwipe.Normalize();
                 swipevector = new Vector3(currentSwipe.x, 0, currentSwipe.y);
-                rb.AddForce((swipevector+vector_access)*boost_power*2, ForceMode.Impulse);
-                camera_box.transform.position = new Vector3(0, 4.91f, -13.44f);
-                camera_box.transform.eulerAngles = new Vector3(22.834f, 0, 0);
+                swipevector /= (Time.time - start_time);
+                rb.AddRelativeForce(swipevector * boost_power*2 , ForceMode.Impulse);
+
+                
+                //camera_box.transform.position = new Vector3(0, 4.91f, -13.44f);
+                //camera_box.transform.eulerAngles = new Vector3(22.834f, 0, 0);
                 code_access.rotation_control = false;
                 code_access.hit2_control = false;
                 vurus_sayisi += 1;
                 toplam_vurus_sayisi = vurus_sayisi + first_ball_access.vurus_sayisi + third_ball_access.vurus_sayisi;
                 Debug.Log(toplam_vurus_sayisi);
+                boost_power = 1;
+                StartCoroutine(bekleme());
+                code_access.camera_moving_pos = true;
             }
             
         }
@@ -122,6 +132,12 @@ public class game_controller2 : MonoBehaviour {
     {
         boost_power = 5;
         
+    }
+
+    IEnumerator bekleme()
+    {
+        yield return new WaitForSeconds(0.4f);
+        rb.drag = 2;
     }
 
 }

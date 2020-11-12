@@ -33,6 +33,12 @@ public class game_controller : MonoBehaviour {
     private Vector2 currentSwipe;
     private Vector3 swipevector;
 
+    private float start_time;
+
+    private Vector3 top2_pos;
+    private Vector3 top3_pos;
+
+    
 
 
     void Start () {
@@ -43,6 +49,8 @@ public class game_controller : MonoBehaviour {
         second_ball_access = second_ball.GetComponent<game_controller2>();
         third_ball_access = third_ball.GetComponent<game_controller3>();
         // Yukarıdaki iki kod top2 ve top3'ün scriptlerine erişmek için kullanıldı.
+
+        
 
     }
 	
@@ -65,6 +73,12 @@ public class game_controller : MonoBehaviour {
         vector_access = code_access.vurus_vector;
         // Bu kodla birlikte "camera_controller" scriptindeki "vurus_vector" vektörüne erişim sağlandı.
 
+        transform.rotation = Quaternion.LookRotation(vector_access);
+        /* Bu kodla birlikte topumun axislerini vector_access yönünde döndürebiliyorum. Böylece bu dönen vektöre göre vuruş
+         * yapabileceğim. */
+
+
+
         if (Input.GetMouseButtonDown(1))
         {
             if (control1)
@@ -72,9 +86,9 @@ public class game_controller : MonoBehaviour {
                 rb = GetComponent<Rigidbody>();
                 // Eğer hit1_control "true" ise ve sağ tıkladıysak artık top1 objemize vuruş yapıyoruz.
 
-                boost_power = 1;
-                /* Boost butonuna tıkladığımda bir defaya mahsus olarak topa sert vurmak istiyorum. Bu yüzden  yukarıdaki
-                 * kodu yazarak boost_power'ı tekrardan eski konumuna getirdim. */
+                start_time = Time.time;
+
+                rb.drag = 1;
 
                 firstPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
                 // Topa tıkladığım andaki mouse'nin pozisyonunu belirledim.
@@ -108,12 +122,17 @@ public class game_controller : MonoBehaviour {
                 /* Ben topa x ve z eksenlerinde vurmak istediğim için currentSwipe vektörünün x ve y bileşenini 
                  * swipevector vektörünün x ve z bileşenlerine eşitledim. */
 
-                rb.AddForce((swipevector+vector_access)*boost_power*2, ForceMode.Impulse);
+                swipevector /= (Time.time - start_time);
+
+                rb.AddRelativeForce(swipevector * boost_power*2, ForceMode.Impulse);
                 // Bu kodla birlikte kameramın bakış açısını da hesaba katarak sürüklediğim yönde vuruş yapabiliyorum.
 
-                camera_box.transform.position = new Vector3(0, 4.91f, -13.44f);
-                camera_box.transform.eulerAngles = new Vector3(22.834f, 0, 0);
+
+                //camera_box.transform.position = new Vector3(0, 4.91f, -13.44f);
+                //camera_box.transform.eulerAngles = new Vector3(22.834f, 0, 0);
                 // Topa vurduktan sonra kameramın açısını ve pozisyonunu oyunun ilk başladığı pozisyona ayarladım.
+
+                
 
                 code_access.rotation_control = false;
                 code_access.hit1_control = false;
@@ -127,12 +146,18 @@ public class game_controller : MonoBehaviour {
                 /* Yukarıdaki üç kodla birlikte topa vuruş sayısı kısıtlandı. OnTriggerExit ve OnCollisionStay metodlarının
                  * kodlarında da yazdığı üzere toplam 4 vuruş hakkımız olacak. 4 vuruşu geçtiğimiz anda aradan geçme ve
                  * gol olma durumları gerçekleşmeyecek. */
+
+                boost_power = 1;
+                /* Boost butonuna tıkladığımda bir defaya mahsus olarak topa sert vurmak istiyorum. Bu yüzden  yukarıdaki
+                 * kodu yazarak boost_power'ı tekrardan eski konumuna getirdim. */
+
+                StartCoroutine(bekleme());
+
+                code_access.camera_moving_pos = true;
             }
 
-
+            
         }
-
-        
 
     }
 
@@ -177,6 +202,14 @@ public class game_controller : MonoBehaviour {
         /* Boost butonuna tıkladığımda artık top1'in vuruş gücü artıyor. Bu aşamadan sonra "Boost" butonunu top2 ve top3
          * için de aktif edeceğim... */
     }
+
+    IEnumerator bekleme()
+    {
+        yield return new WaitForSeconds(0.4f);
+        rb.drag = 2;
+    }
+    
+       
 
     /* game_controller scriptinin çok benzeri game_controller2 ve game_controller3 adı altında top2 ve top3'ün durumları
      * için de yazıldı. Bu üç scriptin arasında hiçbir fark yok. Sadece birisi top1'in, diğeri top2'nin, en sonuncusu da

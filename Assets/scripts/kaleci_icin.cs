@@ -28,14 +28,11 @@ public class kaleci_icin : MonoBehaviour {
 	
 	void Update () {
 
+
         float y_angle = kaleci_motion.transform.eulerAngles.y;
         if (y_angle > 180)
         {
             y_angle = y_angle - 360;
-        }
-        else
-        {
-            y_angle = y_angle;
         }
 
         /* kaleci_motion objemi negatif açıyla döndürdüğüm zaman aldığım "rotation" değerlerde bir hata oluyordu. 
