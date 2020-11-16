@@ -56,12 +56,11 @@ public class camera_controller : MonoBehaviour {
 	
 	void Update () {
         
-        RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
         top1_pos = GameObject.Find("top1").transform.position;
         top2_pos = GameObject.Find("top2").transform.position;
         top3_pos = GameObject.Find("top3").transform.position;
+
+
 
         camera_pos = transform.position;
 
@@ -81,16 +80,30 @@ public class camera_controller : MonoBehaviour {
 
             else if (top3_pos.z < top2_pos.z && top3_pos.z <= top1_pos.z)
             {
-                transform.position = Vector3.Lerp(camera_pos,new Vector3(0, 5.92f, top3_pos.z - 4.8f),0.1f);
+                transform.position = Vector3.Lerp(camera_pos,new Vector3(0, 5.92f, top3_pos.z - 4.8f), 0.1f);
                 transform.eulerAngles = new Vector3(22.834f, 0, 0);
             }
 
 
         }
 
+        /* Öncelikle yapmak istediğim şey oyunun ilk başında topa en yukarıdan bakan kameramın sahada kendi kalemize en 
+         * yakın olan topa sürekli olarak yaklaşmasını sağlamak. Bunun sebebi ise topa vuruş yaptığımda en yukarıda 
+         * bulunan kamera git gide toplardan uzaklaşıyordu ve bu kötü bir görünüme sebep oluyordu. Bu yaklaşma düzeyini ise
+         * şu şekilde belirledim: Başlangıçtaki top1 nesnesi ile kameram arasındaki mesafeyi hesapladım. Ardından yukarıda-
+         * ki kodlarla birlikte z ekseninde en arkada bulunan topu sürekli olarak kontrol ettim. Ve bu en arkadaki topa 
+         * kameramı yaklaştırdım. "Lerp" fonksiyonu ile de pürüzsüz bir geçiş sağladım. */
+
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
         if (Input.GetMouseButtonDown(0))
         {
             camera_moving_pos = false;
+            /* Topa seçim yaptığımda en yukarıdaki kameramın en arkadaki topu takip etmesini bırakmasını istediğim için
+             * bu kod yazıldı. */
+
+
             if(Physics.Raycast(ray,out hit))
             {
                 if (hit.transform.name == "top1" && i==0)
@@ -107,24 +120,24 @@ public class camera_controller : MonoBehaviour {
                      * ğıda top2 ve top3 için de yapıldı. */
 
                     hit_pos = hit.transform.position;
-                    //camera_motion.transform.position = hit.transform.position;
-                    // camera_motion GameObject'inin pozisyonu top1'in pozisyonuna eşitlendi.
-
+                    // Tıkladığım topun pozisyonunun vektörel değeri alındı.
+                    
                     hit.transform.rotation = Quaternion.Euler(0, 0, 0);
+                    /* Bu kodla birlikte vector_access yönünde döndürülmüş olan topumun local axislerini tekrardan sıfır-
+                     * lamış oldum. */
 
                     camera_motion.transform.eulerAngles = new Vector3(0, 0, 0);
                     /* Topumun bakış açısını ayarladıktan sonra topa tekrar tıkladığımda kamera daha önce ayarlamış
                      * olduğum bakış açısında kalıyordu. Bunu düzeltmek için bu kod yazıldı. Artık topa her tıkladığımda
                      * kamera döndürme işlemi sıfırlanıyor ve kameram tam karşıyı gösteriyor. */
 
-                    //transform.position = camera_motion.transform.position + distance;
-                    /* Bu kodla birlikte kamera topa doğru distance vektörü mesafesinde yaklaşacak. Bir diğer deyişle topumu
-                     * distance vektörü mesafesinde takip edecek. */
-
                     transform.rotation = Quaternion.Euler(22.834f, 0, 0);
                     // Birkaç top seçimi yaptıktan sonra bakış açılarında ufak bir hata oluyordu. Bu kodla birlikte hata düzeltildi.
 
-                    transform_control = true; // Kameramın topa tıkladığımda hareket etmesini istediğim için bu kontrol kodu yazıldı.
+                    transform_control = true; 
+                    /* Kameramın topa tıkladığımda pürüzsüz bir şekilde toplara yaklaşmasını istiyorum. Bu yaklaşma hare-
+                     * ketiyle ilgili kodlar if(transform_control) kod grubunun içine yazıldı. Bu kodların top seçimini yap-
+                     * tıktan sonra çalışmasını istediğim için bu kontrol boolean'ı yazıldı. */
 
                     i = 1;
                     j = 0;
@@ -133,20 +146,21 @@ public class camera_controller : MonoBehaviour {
                 }
 
                 camera_pos = transform.position;
+                /* Topa yaklaşan kameranın tekrardan eski yerine dönerken pürüzsüz geçiş yapmasında sorun yaşıyordum. Herbir
+                 * if(hit.transform.name) kod grubunun altına bu kodun yazılmasıyla sorun düzeldi. */
+
+                // Yukarıdaki kodlar çok ufak ayar farklılıklarıyla top2 ve top3 için aşağıya da yazıldı.
+
 
                 if (hit.transform.name == "top2" && j==0)
                 {
                     hit2_control = true;
                     hit1_control = false;
                     hit3_control = false;
-
                     hit_pos = hit.transform.position;
-                    //camera_motion.transform.position = hit.transform.position;
                     camera_motion.transform.eulerAngles = new Vector3(0, 0, 0);
-                    //transform.position = camera_motion.transform.position + distance;
                     transform.rotation = Quaternion.Euler(22.834f, 0, 0);
                     transform_control = true;
-
                     i = 0;
                     j = 1;
                     k = 0;
@@ -159,14 +173,10 @@ public class camera_controller : MonoBehaviour {
                     hit3_control = true;
                     hit1_control = false;
                     hit2_control = false;
-
                     hit_pos = hit.transform.position;
-                    //camera_motion.transform.position = hit.transform.position;
                     camera_motion.transform.eulerAngles = new Vector3(0, 0, 0);
-                    //transform.position = camera_motion.transform.position + distance;
                     transform.rotation = Quaternion.Euler(22.834f, 0, 0);
                     transform_control = true;
-
                     i = 0;
                     j = 0;
                     k = 1;
@@ -182,14 +192,17 @@ public class camera_controller : MonoBehaviour {
             camera_motion.transform.position = Vector3.Lerp(camera_motion.transform.position, hit_pos, 0.1f);
             transform.position = Vector3.Lerp(camera_pos, camera_motion.transform.position + distance, 0.1f);
             StartCoroutine(hareket_process());
+            /* Kameramın seçim yapılan toplar arasında pürüzsüz geçiş yapmasını istiyordum. Fakat Update fonksiyonu çok
+             * hızlı çalıştığı için "Lerp" yavaş geçiş yapma fonksiyonu bir türlü çalışmıyordu. Aşağıdaki hareket_process()
+             * fonksiyonu ile birlikte Update fonksiyonunu yavaşlattım ve toplar arası seçimde camera_motion gameobjectimin 
+             * pürüzsüz geçişini sağladım. Kameram da doğal olarak bağlı olduğu camera_motion gameobjecti ile birlikte hare-
+             * ket etti. */
+
         }
 
         if (rotation_control)
         {
             
-            
-            
-
             float yatay_hareket = Input.GetAxis("Horizontal");
             camera_motion.transform.eulerAngles = new Vector3(camera_motion.transform.eulerAngles.x, camera_motion.transform.eulerAngles.y + yatay_hareket, camera_motion.transform.eulerAngles.z);
             /* camera_motion GameObject'im şimdi bu kodla birlikte dönüş sağlıyor. camera_motion'a bağlı kameram da doğal 
@@ -215,5 +228,8 @@ public class camera_controller : MonoBehaviour {
         yield return new WaitForSeconds(0.5f);
         rotation_control = true;
         transform_control = false;
+        /* Bu fonksiyonun açıklaması if (transform_control) kod grubunun altında yapıldı. Pürüzsüz kamera geçişi sağlandıktan
+         * sonra toplara kameramızın bakış açısını ayarlayabilmemizi istediğim için bu fonksiyonun altına 
+         * "rotation_control=true;"  yazıldı. */
     }
 }

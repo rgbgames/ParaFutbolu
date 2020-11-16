@@ -38,7 +38,7 @@ public class kaleci_icin : MonoBehaviour {
         /* kaleci_motion objemi negatif açıyla döndürdüğüm zaman aldığım "rotation" değerlerde bir hata oluyordu. 
          * Bunu engellemek ve daha doğru değerler almak için yukarıdaki kod yazıldı. */ 
 
-        if (Input.GetKey(KeyCode.Keypad3))
+        if (Input.GetKey(KeyCode.Keypad1))
         {
             if(y_angle>=0 && y_angle < 90)
             {
@@ -47,13 +47,13 @@ public class kaleci_icin : MonoBehaviour {
             
         }
 
-        /* Yukarıdaki "if" koduna göre klavyeden "3"e basılı tuttuğumda kaleci objem kaleci_motion pivot noktası etrafında 
-         * maksimum 90 derece olacak şekilde sağa dönüyor. */
+        /* Yukarıdaki "if" koduna göre klavyeden "1"e basılı tuttuğumda kaleci objem kaleci_motion pivot noktası etrafında 
+         * maksimum 90 derece olacak şekilde sola dönüyor. */
        
 
         
 
-        else if (Input.GetKey(KeyCode.Keypad1))
+        else if (Input.GetKey(KeyCode.Keypad3))
         {
             if (y_angle<=360 && y_angle>-90)
             {
@@ -64,8 +64,8 @@ public class kaleci_icin : MonoBehaviour {
 
         }
 
-        /* Yukarıdaki "if" koduna göre klavyeden "1"e basılı tuttuğumda kaleci objem kaleci_motion pivot noktası etrafında 
-         * maksimum 90 derece olacak şekilde sola dönüyor. */
+        /* Yukarıdaki "if" koduna göre klavyeden "3"e basılı tuttuğumda kaleci objem kaleci_motion pivot noktası etrafında 
+         * maksimum 90 derece olacak şekilde sağa dönüyor. */
 
         else
         {

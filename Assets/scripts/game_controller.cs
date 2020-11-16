@@ -21,25 +21,14 @@ public class game_controller : MonoBehaviour {
     private bool aradan_gecis_control=false;
     
     private Vector3 vector_access;
-
-    public int vurus_sayisi = 0;
-    private int toplam_vurus_sayisi;
-
-    private int boost_power = 1;
-    public UnityEngine.UI.Button boost_button;
-
+    
     private Vector2 firstPressPos;
     private Vector2 secondPressPos;
     private Vector2 currentSwipe;
     private Vector3 swipevector;
 
     private float start_time;
-
-    private Vector3 top2_pos;
-    private Vector3 top3_pos;
-
     
-
 
     void Start () {
 
@@ -60,22 +49,16 @@ public class game_controller : MonoBehaviour {
         control1 = code_access.hit1_control;
         // Bu kodla birlikte "camera_controller" scriptindeki "hit1_control" boolean'ına erişim sağlandı.
 
-        if (control1)
-        {
-            boost_button.gameObject.SetActive(true);
-            second_ball_access.boost_button.gameObject.SetActive(false);
-            third_ball_access.boost_button.gameObject.SetActive(false);
-            /* Herbir top için ayrı boost butonları oluşturuldu ve hepsi başlangıçta deaktif bir halde. Yukarıdaki "if" 
-             * içindeki kodlar her top için ayrı ayrı yazıldı. Böylelikle boost butonları seçilen topa göre aktif oluyor
-             * ve o topa yüksek güç uygulayabiliyor. */
-        }
-
         vector_access = code_access.vurus_vector;
         // Bu kodla birlikte "camera_controller" scriptindeki "vurus_vector" vektörüne erişim sağlandı.
 
         transform.rotation = Quaternion.LookRotation(vector_access);
-        /* Bu kodla birlikte topumun axislerini vector_access yönünde döndürebiliyorum. Böylece bu dönen vektöre göre vuruş
-         * yapabileceğim. */
+        /* Kamera ile topa bakış açımı ayarladıktan sonra bakış açımın tam karşısının +z ekseni; bu bakış yönünün sağının
+         * +x ekseni olmasını istiyorum. Eğer bunu sağlarsam topa sürükleme hareketiyle vuruş yaptığımda kendi bakış açımla
+         * vuruş yapabileceğim. Bu kodla birlikte topumun axislerini camera_controller içindeki vector_access yönünde değiş-
+         * tirdim ve yapmak istediğim sonuca ulaştım. Bu kod yazılmadan önce bakış açımı ayarlayıp vuruş yapmak istediğimde
+         * unity benim bakış açımın karşısını +z olarak almak yerine oyunun kendi axislerindeki +z eksenini kabul ediyordu.
+         * Bu da istediğim yöne vuruş yapma şansımı ortadan kaldırıyordu. */
 
 
 
@@ -87,8 +70,10 @@ public class game_controller : MonoBehaviour {
                 // Eğer hit1_control "true" ise ve sağ tıkladıysak artık top1 objemize vuruş yapıyoruz.
 
                 start_time = Time.time;
+                // Topa tıkladığım anda bir zaman sayacı başlattım. 
 
                 rb.drag = 1;
+                // Topa tıkladığım andaki sürtünme kuvvetini belirledim. 
 
                 firstPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
                 // Topa tıkladığım andaki mouse'nin pozisyonunu belirledim.
@@ -109,7 +94,7 @@ public class game_controller : MonoBehaviour {
             if (control1)
             {
                 secondPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-                // Mouse'ye tıklamayı bıraktığım andaki pozisyonu belirledim.
+                // Mouse'a tıklamayı bıraktığım andaki pozisyonu belirledim.
 
                 currentSwipe = new Vector2(secondPressPos.x - firstPressPos.x, secondPressPos.y - firstPressPos.y);
                 // Mouse'ye ilk tıkladığım ve tıklamayı bıraktığım anlardaki pozisyonlar arası vektörü belirledim.
@@ -123,37 +108,25 @@ public class game_controller : MonoBehaviour {
                  * swipevector vektörünün x ve z bileşenlerine eşitledim. */
 
                 swipevector /= (Time.time - start_time);
+                // Sürükleme işleminin hızına göre vuruş vektörümün kuvvetini belirlemek için yukarıdaki kod yazıldı.
 
-                rb.AddRelativeForce(swipevector * boost_power*2, ForceMode.Impulse);
+                rb.AddRelativeForce(swipevector, ForceMode.Impulse);
                 // Bu kodla birlikte kameramın bakış açısını da hesaba katarak sürüklediğim yönde vuruş yapabiliyorum.
-
-
-                //camera_box.transform.position = new Vector3(0, 4.91f, -13.44f);
-                //camera_box.transform.eulerAngles = new Vector3(22.834f, 0, 0);
-                // Topa vurduktan sonra kameramın açısını ve pozisyonunu oyunun ilk başladığı pozisyona ayarladım.
-
-                
 
                 code_access.rotation_control = false;
                 code_access.hit1_control = false;
-                /* Topa vurduktan sonra kameramın hala topa bakış açısını ayarlıyor olmasını ve hiçbir top seçimi ve 
-                 * kamera ayarı yapmadan tekrar sağ tıkladığımda vuruş yapmayı istemiyorum. Bunu engellemek için 
-                 * camera_controller scriptindeki rotation_control'ü ve hit1_control'ü "false" yaptım. */
+                /* Topa vurduktan sonra kameramın hala topa bakış açısını ayarlıyor olmasını ve oyunun top1'e vuruş izni 
+                 * vererek kalmasını istemiyorum. Bu yüzden yukarıdaki kodlar yazıldı. */
 
-                vurus_sayisi += 1;
-                toplam_vurus_sayisi = vurus_sayisi + second_ball_access.vurus_sayisi + third_ball_access.vurus_sayisi;
-                Debug.Log(toplam_vurus_sayisi);
-                /* Yukarıdaki üç kodla birlikte topa vuruş sayısı kısıtlandı. OnTriggerExit ve OnCollisionStay metodlarının
-                 * kodlarında da yazdığı üzere toplam 4 vuruş hakkımız olacak. 4 vuruşu geçtiğimiz anda aradan geçme ve
-                 * gol olma durumları gerçekleşmeyecek. */
-
-                boost_power = 1;
-                /* Boost butonuna tıkladığımda bir defaya mahsus olarak topa sert vurmak istiyorum. Bu yüzden  yukarıdaki
-                 * kodu yazarak boost_power'ı tekrardan eski konumuna getirdim. */
-
-                StartCoroutine(bekleme());
+                StartCoroutine(top_drag());
+                /* Topa vurma işlemi gerçekleştikten sonra önce akıcı gitmesini; ardından bir süre sonra hızlı bir şekilde
+                 * yavaşlamasını istediğim için top_drag() fonksiyonu yazıldı. Böylece topa vurulduktan bir süre sonra 
+                 * drag force arttırıldı. */
 
                 code_access.camera_moving_pos = true;
+                /* Topa tıkladıktan sonra kameramın en arkada kalan topu takip etmesi için camera_controller scriptindeki 
+                 * camera_moving_pos boolean'ı aktif hale getirildi. */
+
             }
 
             
@@ -165,7 +138,7 @@ public class game_controller : MonoBehaviour {
     {
         string obje_ismi = other.gameObject.name;
 
-        if (aradan_gecis_activity==true && obje_ismi.Equals("aradan_gecme") && toplam_vurus_sayisi<=4)
+        if (aradan_gecis_activity==true && obje_ismi.Equals("aradan_gecme"))
         {
             Debug.Log("Secilen top1 gecti.");
 
@@ -185,25 +158,16 @@ public class game_controller : MonoBehaviour {
     {
         string kale_ismi = collision.gameObject.name;
 
-        if(aradan_gecis_control==true && kale_ismi.Equals("kale") && toplam_vurus_sayisi<=4)
+        if(aradan_gecis_control==true && kale_ismi.Equals("kale"))
         {
             Debug.Log("Gol");
         }
 
-        /* Bu metoda göre topumuz aradan_gecis_control boolean'ını sağlayıp diğer iki topun arasından geçtiyse, toplam
-         * vuruş sayısının altındaysa ve "kale"nin alanına girdiyse gol atma işlemimiz tamamlanmış oluyor */
+        /* Bu metoda göre topumuz aradan_gecis_control boolean'ını sağlayıp diğer iki topun arasından geçtiyse ve 
+         * "kale"nin alanına girdiyse gol atma işlemimiz tamamlanmış oluyor */
     }
 
-    
-
-    public void boost()
-    {
-        boost_power = 5;
-        /* Boost butonuna tıkladığımda artık top1'in vuruş gücü artıyor. Bu aşamadan sonra "Boost" butonunu top2 ve top3
-         * için de aktif edeceğim... */
-    }
-
-    IEnumerator bekleme()
+    IEnumerator top_drag()
     {
         yield return new WaitForSeconds(0.4f);
         rb.drag = 2;
