@@ -28,7 +28,7 @@ public class game_controller : MonoBehaviour {
     private Vector3 swipevector;
 
     private float start_time;
-    
+    public bool rakip_kaleci_control = false;
 
     void Start () {
 
@@ -72,7 +72,7 @@ public class game_controller : MonoBehaviour {
                 start_time = Time.time;
                 // Topa tıkladığım anda bir zaman sayacı başlattım. 
 
-                rb.drag = 1;
+                rb.drag = 0.2f;
                 // Topa tıkladığım andaki sürtünme kuvvetini belirledim. 
 
                 firstPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
@@ -110,8 +110,9 @@ public class game_controller : MonoBehaviour {
                 swipevector /= (Time.time - start_time);
                 // Sürükleme işleminin hızına göre vuruş vektörümün kuvvetini belirlemek için yukarıdaki kod yazıldı.
 
-                rb.AddRelativeForce(swipevector, ForceMode.Impulse);
+                rb.AddRelativeForce(swipevector*2, ForceMode.Impulse);
                 // Bu kodla birlikte kameramın bakış açısını da hesaba katarak sürüklediğim yönde vuruş yapabiliyorum.
+                // Swipevector'u en düşük olarak 2 ile çarpacağız. Top geliştikçe bu değer 3'e kadar çıkacak...
 
                 code_access.rotation_control = false;
                 code_access.hit1_control = false;
@@ -126,6 +127,8 @@ public class game_controller : MonoBehaviour {
                 code_access.camera_moving_pos = true;
                 /* Topa tıkladıktan sonra kameramın en arkada kalan topu takip etmesi için camera_controller scriptindeki 
                  * camera_moving_pos boolean'ı aktif hale getirildi. */
+
+                rakip_kaleci_control = true;
 
             }
 
@@ -170,7 +173,7 @@ public class game_controller : MonoBehaviour {
     IEnumerator top_drag()
     {
         yield return new WaitForSeconds(0.4f);
-        rb.drag = 2;
+        rb.drag = 2.4f;
     }
     
        

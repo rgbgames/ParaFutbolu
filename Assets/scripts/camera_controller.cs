@@ -36,7 +36,7 @@ public class camera_controller : MonoBehaviour {
 
         
 
-        camera_first_position = new Vector3(0, 2.46f, -11.4f); 
+        camera_first_position = new Vector3(0, 2.46f, -9.4f); 
         // Bu vektör topa ilk tıkladığımda kameramın bulunmasını istediğim pozisyonu ifade ediyor.
 
         camera_motion = new GameObject();

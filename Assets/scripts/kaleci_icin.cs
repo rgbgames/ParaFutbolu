@@ -7,8 +7,7 @@ public class kaleci_icin : MonoBehaviour {
     private GameObject kaleci_motion;
     private Vector3 distance;
 
-    /* Bu script ve "kaleci" GameObject'i şu anda deaktif durumda. Daha sonra top karşı tarafa geçtiğinde aktif hale ge-
-     * lecek. Ben şimdilik kalecinin sağa ve sola yatış mekaniğini yazdım... */
+    // Bizim kalecimiz top ancak karşıya geçince çalışmalıdır. Bu konuda zamanı gelince düzenlemeler yapılacaktır. 
 
 	void Start () {
 

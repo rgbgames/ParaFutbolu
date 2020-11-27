@@ -28,7 +28,7 @@ public class game_controller2 : MonoBehaviour {
     private Vector3 force_vector;
 
     private float start_time;
-    
+    public bool rakip_kaleci_control = false;
 
     void Start () {
         code_access = camera_box.GetComponent<camera_controller>();
@@ -50,7 +50,7 @@ public class game_controller2 : MonoBehaviour {
             {
                 rb = GetComponent<Rigidbody>();
                 start_time = Time.time;
-                rb.drag = 1;
+                rb.drag = 0.2f;
                 firstPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
                 aradan_gecis_activity = true;
                 first_ball_access.aradan_gecis_activity = false;
@@ -70,11 +70,12 @@ public class game_controller2 : MonoBehaviour {
                 currentSwipe.Normalize();
                 swipevector = new Vector3(currentSwipe.x, 0, currentSwipe.y);
                 swipevector /= (Time.time - start_time);
-                rb.AddRelativeForce(swipevector , ForceMode.Impulse);
+                rb.AddRelativeForce(swipevector*2 , ForceMode.Impulse);
                 code_access.rotation_control = false;
                 code_access.hit2_control = false;
                 StartCoroutine(top_drag());
                 code_access.camera_moving_pos = true;
+                rakip_kaleci_control = true;
             }
             
         }
@@ -113,7 +114,7 @@ public class game_controller2 : MonoBehaviour {
     IEnumerator top_drag()
     {
         yield return new WaitForSeconds(0.4f);
-        rb.drag = 2;
+        rb.drag = 2.4f;
     }
 
 }
