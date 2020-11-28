@@ -28,7 +28,14 @@ public class game_controller : MonoBehaviour {
     private Vector3 swipevector;
 
     private float start_time;
-    public bool rakip_kaleci_control = false;
+    
+    
+    private Vector3 firlatma;
+    private float x;
+    private float z;
+    private bool absorption_control;
+    private bool firlatma_control;
+    
 
     void Start () {
 
@@ -39,6 +46,8 @@ public class game_controller : MonoBehaviour {
         third_ball_access = third_ball.GetComponent<game_controller3>();
         // Yukarıdaki iki kod top2 ve top3'ün scriptlerine erişmek için kullanıldı.
 
+        absorption_control = false;
+        firlatma_control = false;
         
 
     }
@@ -51,6 +60,9 @@ public class game_controller : MonoBehaviour {
 
         vector_access = code_access.vurus_vector;
         // Bu kodla birlikte "camera_controller" scriptindeki "vurus_vector" vektörüne erişim sağlandı.
+
+        x = Random.Range(-1.0f, 1.0f);
+        z = Random.Range(-1.0f, 1.0f);
 
         transform.rotation = Quaternion.LookRotation(vector_access);
         /* Kamera ile topa bakış açımı ayarladıktan sonra bakış açımın tam karşısının +z ekseni; bu bakış yönünün sağının
@@ -110,7 +122,7 @@ public class game_controller : MonoBehaviour {
                 swipevector /= (Time.time - start_time);
                 // Sürükleme işleminin hızına göre vuruş vektörümün kuvvetini belirlemek için yukarıdaki kod yazıldı.
 
-                rb.AddRelativeForce(swipevector*2, ForceMode.Impulse);
+                rb.AddRelativeForce(swipevector*3, ForceMode.Impulse);
                 // Bu kodla birlikte kameramın bakış açısını da hesaba katarak sürüklediğim yönde vuruş yapabiliyorum.
                 // Swipevector'u en düşük olarak 2 ile çarpacağız. Top geliştikçe bu değer 3'e kadar çıkacak...
 
@@ -128,13 +140,53 @@ public class game_controller : MonoBehaviour {
                 /* Topa tıkladıktan sonra kameramın en arkada kalan topu takip etmesi için camera_controller scriptindeki 
                  * camera_moving_pos boolean'ı aktif hale getirildi. */
 
-                rakip_kaleci_control = true;
+                
 
             }
 
             
         }
 
+        if (absorption_control)
+        {
+            Vector3 absorber_position = new Vector3(GameObject.Find("ball_absorber").transform.position.x, 1.02f, GameObject.Find("ball_absorber").transform.position.z);
+            transform.position = Vector3.Lerp(transform.position, absorber_position, 0.1f);
+            firlatma = new Vector3(x, 0, z);
+            firlatma.Normalize();
+            StartCoroutine(absorption_engel());
+        }
+
+        if (firlatma_control)
+        {
+            absorption_control = false;
+            rb.drag = 0.2f;
+            rb.AddForce(firlatma, ForceMode.Impulse);
+            firlatma_control = false;
+        }
+
+
+    }
+
+    private void OnTriggerEnter(Collider engel)
+    {
+        string engel_ismi = engel.gameObject.name;
+        if (engel_ismi.Equals("ball_absorber"))
+        {
+            GameObject.Find("ball_absorber").GetComponent<ballabsorber>().enabled = false;
+            rb.velocity = new Vector3(0, 0, 0);
+            absorption_control = true;
+
+        }
+
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        string engel_ismi = other.gameObject.name;
+        if (engel_ismi.Equals("camur"))
+        {
+            rb.drag = 5;
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -152,28 +204,48 @@ public class game_controller : MonoBehaviour {
 
             aradan_gecis_control = true;
         }
-        
+
+        if (obje_ismi.Equals("ball_absorber"))
+        {
+           GameObject.Find("ball_absorber").GetComponent<ballabsorber>().enabled = true;
+           
+        }
+
         /* OnTriggerExit metoduna ve altındaki kodlara göre top1 "aradan_gecme" ismindeki objenin içinden çıktığı anda
          * top1'in geçtiğini kontrol edebiliyor. */
+
     }
 
     private void OnCollisionStay(Collision collision)
     {
-        string kale_ismi = collision.gameObject.name;
+        string obje_ismi = collision.gameObject.name;
 
-        if(aradan_gecis_control==true && kale_ismi.Equals("kale"))
+        if(aradan_gecis_control==true && obje_ismi.Equals("kale"))
         {
             Debug.Log("Gol");
+            code_access.i = 0;
+            code_access.j = 0;
+            code_access.k = 0;
         }
 
         /* Bu metoda göre topumuz aradan_gecis_control boolean'ını sağlayıp diğer iki topun arasından geçtiyse ve 
          * "kale"nin alanına girdiyse gol atma işlemimiz tamamlanmış oluyor */
+
+        
     }
 
     IEnumerator top_drag()
     {
         yield return new WaitForSeconds(0.4f);
         rb.drag = 2.4f;
+    }
+
+    IEnumerator absorption_engel()
+    {
+        yield return new WaitForSeconds(1.5f);
+        firlatma_control = true;
+        
+
     }
     
        

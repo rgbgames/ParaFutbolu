@@ -29,13 +29,23 @@ public class game_controller3 : MonoBehaviour {
     private Vector3 force_vector;
 
     private float start_time;
-    public bool rakip_kaleci_control = false;
+
+    private Vector3 firlatma;
+    private float x;
+    private float z;
+    private bool absorption_control;
+    private bool firlatma_control;
+
 
 
     void Start () {
         code_access = camera_box.GetComponent<camera_controller>();
         first_ball_access = first_ball.GetComponent<game_controller>();
         second_ball_access = second_ball.GetComponent<game_controller2>();
+        absorption_control = false;
+        firlatma_control = false;
+        
+
     }
 
     
@@ -45,7 +55,9 @@ public class game_controller3 : MonoBehaviour {
         control3 = code_access.hit3_control;
         vector_access = code_access.vurus_vector;
         transform.rotation = Quaternion.LookRotation(vector_access);
-        
+        x = Random.Range(-1.0f, 1.0f);
+        z = Random.Range(-1.0f, 1.0f);
+
 
         if (Input.GetMouseButtonDown(1))
         {
@@ -73,18 +85,55 @@ public class game_controller3 : MonoBehaviour {
                 currentSwipe.Normalize();
                 swipevector = new Vector3(currentSwipe.x, 0, currentSwipe.y);
                 swipevector /= (Time.time - start_time);
-                rb.AddRelativeForce(swipevector*2, ForceMode.Impulse);
+                rb.AddRelativeForce(swipevector*3, ForceMode.Impulse);
                 code_access.rotation_control = false;
                 code_access.hit3_control = false;
                 StartCoroutine(top_drag());
                 code_access.camera_moving_pos = true;
-                rakip_kaleci_control = true;
+                
             }
             
         }
 
+        if (absorption_control)
+        {
+            Vector3 absorber_position = new Vector3(GameObject.Find("ball_absorber").transform.position.x, 1.02f, GameObject.Find("ball_absorber").transform.position.z);
+            transform.position = Vector3.Lerp(transform.position, absorber_position, 0.1f);
+            firlatma = new Vector3(x, 0, z);
+            firlatma.Normalize();
+            StartCoroutine(absorption_engel());
+        }
 
+        if (firlatma_control)
+        {
+            absorption_control = false;
+            rb.drag = 0.2f;
+            rb.AddForce(firlatma, ForceMode.Impulse);
+            firlatma_control = false;
+        }
 
+    }
+
+    private void OnTriggerEnter(Collider engel)
+    {
+        string engel_ismi = engel.gameObject.name;
+        if (engel_ismi.Equals("ball_absorber"))
+        {
+            GameObject.Find("ball_absorber").GetComponent<ballabsorber>().enabled = false;
+            rb.velocity = new Vector3(0, 0, 0);
+            absorption_control = true;
+
+        }
+
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        string engel_ismi = other.gameObject.name;
+        if (engel_ismi.Equals("camur"))
+        {
+            rb.drag = 5;
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -99,19 +148,26 @@ public class game_controller3 : MonoBehaviour {
         }
 
 
+        if (top_ismi.Equals("ball_absorber"))
+        {
+            GameObject.Find("ball_absorber").GetComponent<ballabsorber>().enabled = true;
+
+        }
     }
 
     private void OnCollisionStay(Collision collision)
     {
-        string kale_ismi = collision.gameObject.name;
+        string obje_ismi = collision.gameObject.name;
 
-        if (aradan_gecis_control == true && kale_ismi.Equals("kale"))
+        if (aradan_gecis_control == true && obje_ismi.Equals("kale"))
         {
             Debug.Log("Gol");
             code_access.i = 0;
             code_access.j = 0;
             code_access.k = 0;
         }
+
+        
     }
     
 
@@ -119,6 +175,14 @@ public class game_controller3 : MonoBehaviour {
     {
         yield return new WaitForSeconds(0.4f);
         rb.drag = 2.4f;
+    }
+
+    IEnumerator absorption_engel()
+    {
+        yield return new WaitForSeconds(1.5f);
+        firlatma_control = true;
+
+
     }
 
 

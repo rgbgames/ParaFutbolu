@@ -12,7 +12,7 @@ public class kaleci_icin : MonoBehaviour {
 	void Start () {
 
         kaleci_motion = new GameObject();
-        kaleci_motion.transform.position = new Vector3(0, 1.06f, -10);
+        kaleci_motion.transform.position = new Vector3(0, 1.06f, -8);
         transform.parent = kaleci_motion.transform;
         distance = transform.position - kaleci_motion.transform.position;
 
