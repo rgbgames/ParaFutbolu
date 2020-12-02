@@ -169,7 +169,19 @@ public class game_controller3 : MonoBehaviour {
 
         
     }
-    
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        string obje_ismi = collision.gameObject.name;
+
+        if (obje_ismi.Equals("yumruk"))
+        {
+
+            transform.parent = collision.transform;
+        }
+
+    }
+
 
     IEnumerator top_drag()
     {

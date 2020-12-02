@@ -197,6 +197,9 @@ public class game_controller : MonoBehaviour {
         {
             Debug.Log("Secilen top1 gecti.");
 
+            /* OnTriggerExit metoduna ve altındaki kodlara göre top1 "aradan_gecme" ismindeki objenin içinden çıktığı anda
+            * top1'in geçtiğini kontrol edebiliyor. */
+
             code_access.i = 0;
             code_access.j = 0;
             code_access.k = 0;
@@ -211,8 +214,7 @@ public class game_controller : MonoBehaviour {
            
         }
 
-        /* OnTriggerExit metoduna ve altındaki kodlara göre top1 "aradan_gecme" ismindeki objenin içinden çıktığı anda
-         * top1'in geçtiğini kontrol edebiliyor. */
+        
 
     }
 
@@ -231,6 +233,18 @@ public class game_controller : MonoBehaviour {
         /* Bu metoda göre topumuz aradan_gecis_control boolean'ını sağlayıp diğer iki topun arasından geçtiyse ve 
          * "kale"nin alanına girdiyse gol atma işlemimiz tamamlanmış oluyor */
 
+
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        string obje_ismi = collision.gameObject.name;
+        
+        if (obje_ismi.Equals("yumruk"))
+        {
+
+            transform.parent = collision.transform;
+        }
         
     }
 
